@@ -87,13 +87,32 @@ bool parseJointDynamics(JointDynamics &jd, TiXmlElement* config)
     }
   }
 
-  if (damping_str == NULL && friction_str == NULL)
+  // Get joint fwd_dyn: is it a "forward dynamics" joint
+  const char* fwdDyn_str = config->Attribute("fwd_dyn");
+  if (fwdDyn_str == NULL){
+    logDebug("joint dynamics: no forward dynamics information, defaults to False");
+    jd.fwdDyn = false;
+  }
+  else
   {
-    logError("joint dynamics element specified with no damping and no friction");
+    try
+    {
+      jd.fwdDyn = boost::lexical_cast<bool>(fwdDyn_str);
+    }
+    catch (boost::bad_lexical_cast &e)
+    {
+      logError("forward dynamics value (%s) is not a boolean: %s",fwdDyn_str, e.what());
+      return false;
+    }
+  }
+
+  if (damping_str == NULL && friction_str == NULL && fwdDyn_str == NULL)
+  {
+    logError("joint dynamics element specified with no damping, no friction and no forward dynamics flag");
     return false;
   }
   else{
-    logDebug("joint dynamics: damping %f and friction %f", jd.damping, jd.friction);
+    logDebug("joint dynamics: damping %f, friction %f and forward dynamics %b", jd.damping, jd.friction, jd.fwdDyn);
     return true;
   }
 }
@@ -571,6 +590,7 @@ bool exportJointDynamics(JointDynamics &jd, TiXmlElement* xml)
   TiXmlElement *dynamics_xml = new TiXmlElement("dynamics");
   dynamics_xml->SetAttribute("damping", urdf_export_helpers::values2str(jd.damping) );
   dynamics_xml->SetAttribute("friction", urdf_export_helpers::values2str(jd.friction) );
+  dynamics_xml->SetAttribute("fwd_dyn", urdf_export_helpers::values2str(jd.fwdDyn) );
   xml->LinkEndChild(dynamics_xml);
   return true;
 }

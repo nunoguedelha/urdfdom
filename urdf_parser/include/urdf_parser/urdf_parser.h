@@ -51,6 +51,7 @@ std::string values2str(urdf::Vector3 vec);
 std::string values2str(urdf::Rotation rot);
 std::string values2str(urdf::Color c);
 std::string values2str(double d);
+std::string values2str(bool e);
 
 }
 
