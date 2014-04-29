@@ -84,9 +84,11 @@ std::string values2str(double d)
 {
     return values2str(1, &d);
 }
-std::string values2str(bool e)
+std::string values2str(bool b)
 {
-    return values2str(1, &e);
+    std::stringstream ss;
+    ss << (b==true ? "True" : "False");
+    return ss.str();
 }
 }
 
