@@ -84,6 +84,10 @@ std::string values2str(double d)
 {
     return values2str(1, &d);
 }
+std::string values2str(bool e)
+{
+    return values2str(1, &e);
+}
 }
 
 namespace urdf{
